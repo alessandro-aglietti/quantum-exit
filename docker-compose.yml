@@ -1,29 +1,20 @@
-################################################################################
-# Node-RED Stack or Compose
-################################################################################
-# docker stack deploy node-red --compose-file docker-compose-node-red.yml
-# docker-compose -f docker-compose-node-red.yml -p myNoderedProject up
-################################################################################
 version: "3.7"
 
 services:
   node-red:
-    image: nodered/node-red:latest
+    image: node
     environment:
       - TZ=Europe/Amsterdam
     ports:
-      - "1880:1880"
-    networks:
-      - node-red-net
+      - "21880:1880"
+    entrypoint: "/opt/data/entrypoint.sh"
+    environment: 
+      - NODE_RED_STARTUP_DIR=/data
     volumes:
-      - node-red-data:/data
-      - data/settings.js:/opt/data/settings.js
-      - data/flows_cred.json:/opt/data/flows_cred.json
-      - data/flows.json:/opt/data/flows.json
-      - data/app-root/src/package.json:/opt/data/app-root/src/package.json
-
-volumes:
-  node-red-data:
-
-networks:
-  node-red-net:
+      - ./data/settings.js:/opt/data/settings.js
+      - ./data/flows_cred.json:/opt/data/flows_cred.json
+      - ./data/flows.json:/opt/data/flows.json
+      - ./data/package.json:/opt/data/package.json
+      - ./data/node-red-user-dir:/opt/data/node-red-user-dir
+      - ./data/entrypoint.sh:/opt/data/entrypoint.sh
+      - ./data/backup.sh:/opt/data/backup.sh

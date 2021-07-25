@@ -18,3 +18,12 @@ services:
       - ./data/node-red-user-dir:/opt/data/node-red-user-dir
       - ./data/entrypoint.sh:/opt/data/entrypoint.sh
       - ./data/backup.sh:/opt/data/backup.sh
+  miniconda3:
+    image: continuumio/miniconda3
+    entrypoint: "/opt/qiskit-client/entrypoint.sh"
+    working_dir: /opt/qiskit-client
+    environment:
+      - QISKIT_IBMQ_PROVIDER_LOG_LEVEL=DEBUG
+      - QISKIT_IBMQ_PROVIDER_LOG_FILE=/opt/qiskit-client/ibm-quantum-provider.log
+    volumes:
+      - ./qiskit-client:/opt/qiskit-client

@@ -13,3 +13,10 @@ quantum internet > istant computing big answers
 
 [![Open this project in Cloud
 Shell](http://gstatic.com/cloudssh/images/open-btn.png)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/alessandro-aglietti/quantum-exit.git&tutorial=gcp-shell-tutorial.md&shellonly=true)
+
+
+## Run with secrets
+
+Nel secrets/docker-compose-secrets.yml aggiungere environment `IBM_QUANTUM_EXPERIENCE_TOKEN` con il proprio token preso da https://quantum-computing.ibm.com/account.
+
+`docker-compose -f docker-compose.yml -f secrets/docker-compose-secrets.yml up`

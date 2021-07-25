@@ -1,0 +1,591 @@
+openapi: 3.0.0
+info:
+  title: Qiskit Runtime
+  version: '1.0'
+  description: Push computation close to the quantum device
+servers:
+  - url: '/'
+tags:
+  - name: "programs"
+    description: "Endpoints related to Qiskit Runtime programs"
+  - name: "jobs"
+    description: "Endpoints related to programs executions"
+paths:
+  /programs:
+    post:
+      tags:
+        - "programs"
+      summary: New Program
+      operationId: post-program
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Program ID
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      description: Create a new quantum program
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadProgramParams'
+        description: ''
+    get:
+      tags:
+        - "programs"
+      summary: Programs
+      operationId: get-programs
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProgramResponse'
+      description: Get all my programs
+  '/programs/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        description: Identifier of an available program
+        in: path
+        required: true
+    get:
+      tags:
+        - "programs"
+      summary: Program
+      operationId: get-program
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: [ ]
+    delete:
+      tags:
+        - "programs"
+      summary: Program Delete
+      operationId: delete-programs-id
+      responses:
+        '204':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Delete a program
+      parameters: [ ]
+      security:
+        - Authorization: [ ]
+  '/programs/{id}/public':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        description: Identifier of an available program
+        in: path
+        required: true
+    put:
+      tags:
+        - "programs"
+      summary: Program
+      operationId: set-program-public
+      responses:
+        '204':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: [ ]
+  '/programs/{id}/private':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        description: Identifier of an available program
+        in: path
+        required: true
+    put:
+      tags:
+        - "programs"
+      summary: Program
+      operationId: set-program-private
+      responses:
+        '204':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+        - Authorization: [ ]
+  /jobs:
+    get:
+      parameters:
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            default: 200
+          description: number of results to return at a time
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+          description: number of results to offset when retrieving list of jobs
+        - in: query
+          name: pending
+          required: false
+          schema: 
+            type: boolean
+          description: returns 'Queued' and 'Running' jobs if true, returns 'Completed', 'Cancelled', 'Cancelled - Ran too long', and 'Failed' jobs if false
+      tags:
+        - "jobs"
+      summary: Jobs
+      operationId: get-program-id-jobs
+      description: Get quantum program jobs
+      security:
+        - Authorization: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobsResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - "jobs"
+      summary: Run Program
+      operationId: post-program-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Program ID
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Run a quantum program
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgramParams'
+  '/jobs/{jid}':
+    parameters:
+      - schema:
+          type: string
+        name: jid
+        in: path
+        required: true
+        description: Identifier of an existing job
+    get:
+      summary: Get Job
+      tags:
+        - "jobs"
+      description: Get quantum program job
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      operationId: get-programs-id-jobs-jid
+      security:
+        - Authorization: [ ]
+    delete:
+      tags:
+        - "jobs"
+      summary: Job Delete
+      operationId: delete-programs-id-jobs-jid
+      responses:
+        '204':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      description: Delete a job
+      security:
+        - Authorization: []
+  '/jobs/{jid}/results':
+    parameters:
+      - schema:
+          type: string
+        name: jid
+        in: path
+        required: true
+    get:
+      summary: Job Results
+      tags:
+        - "jobs"
+      description: Get job results
+      responses:
+        '200':
+          description: Returns job results
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      operationId: get-programs-id-jobs-jid-results
+      security:
+        - Authorization: [ ]
+  '/jobs/{jid}/logs':
+    parameters:
+      - schema:
+          type: string
+        name: jid
+        in: path
+        required: true
+    get:
+      summary: Job logs
+      tags:
+        - "jobs"
+      description: Get job logs
+      responses:
+        '200':
+          description: Returns job logs
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '410':
+          description: Gone
+  '/jobs/{jid}/cancel':
+    parameters:
+      - schema:
+          type: string
+        name: jid
+        in: path
+        required: true
+    post:
+      summary: Cancels the job execution
+      tags:
+        - "jobs"
+      description: Cancels the job execution
+      responses:
+        '204':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '409':
+          description: Job is in non cancellable status
+      operationId: cancel-job-jid
+      security:
+        - Authorization: [ ]
+  /logout:
+    post:
+      summary: Cleans the authorization cache, useful if a user's role changes
+      tags: [ ]
+      responses:
+        '200':
+          description: Authorization cache for the user was deleted
+        '500':
+          description: Internal error
+      operationId: logout
+      security:
+        - Authorization: [ ]
+  '/stream/jobs/{jid}':
+    parameters:
+      - schema:
+          type: string
+        name: jid
+        in: path
+        required: true
+    get:
+      summary: Job Results Stream
+      tags:
+        - "jobs"
+      description: Get a job results stream as the job runs
+      responses:
+        '200':
+          description: WebSocket stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                x-events:
+                  result:
+                    type: string
+        '302':
+          description: Found
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                x-events:
+                  result:
+                    type: string
+
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
+
+
+components:
+  schemas:
+    UploadProgramParams:
+      title: UploadProgramParams
+      allOf: 
+        - $ref: '#/components/schemas/ProgramMetadata'
+        - type: object
+          properties:
+            program:
+              format: binary
+              description: The program file to upload
+              type: string
+            isPublic:
+              description: Defines if the program is created as public or private
+              type: boolean
+          required:
+            - program
+    ProgramParams:
+      title: ProgramParams
+      type: object
+      properties:
+        programId:
+          type: string
+          description: Reference to the program to be executed
+        hub:
+          type: string
+          description: Provider hub name
+        group:
+          type: string
+          description: Provider group name
+        project:
+          type: string
+          description: Provider project name
+        backend:
+          type: string
+          description: Name that identifies the backend on which to run the program
+        params:
+          type: array
+          description: Parameters to inject into the program
+          items:
+            type: string
+      required:
+        - programId
+        - hub
+        - group
+        - project
+        - backend
+    ProgramResponse:
+      title: ProgramResponse
+      allOf:
+        - $ref: '#/components/schemas/ProgramMetadata'
+    JobResponse:
+      title: JobResponse
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier assigned to the job
+        hub:
+          type: string
+          description: Name of the hub in which the job is being executed
+        group:
+          type: string
+          description: Name of the group in which the job is being executed
+        project:
+          type: string
+          description: Name of the project in which the job is being executed
+        backend:
+          type: string
+          description: Name of the backend in which the job is being executed
+        status:
+          $ref: '#/components/schemas/JobStatus'
+        params:
+          type: array
+          items:
+            type: string
+          description: Parameters used to execute the job
+        program:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Identifier from the executed program
+        created:
+          type: string
+          description: UTC timestamp for when the job was created
+    JobsResponse:
+      title: JobsResponse
+      type: object
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobResponse'
+        count: 
+          type: integer
+          description: Total count of jobs for the user
+    JobStatus:
+      title: JobStatus
+      type: string
+      description: Current status of the job
+      enum: [ queued, running, completed, cancelled, cancelled - ran too long, failed ]
+    ProgramMetadata:
+      title: ProgramMetadata
+      type: object      
+      properties:
+        name:
+          type: string
+          description: Program name  
+        cost:
+          type: integer
+          format: int32
+          description: Cost of the program as the estimated time it should take to complete (in seconds).
+          default: 600
+          minimum: 60
+        description:
+          type: string
+          description: Program description to help others understand the purpose of this program
+        version:
+          type: string
+          description: Program version
+          default: "1.0"
+        backendRequirements:
+          description: Backend characteristics, such as the number of qubits, required in order to run this program
+          type: object
+          additionalProperties: true
+        parameters:
+          description: Program parameters
+          type: object
+          required:
+            - doc
+          properties:
+            schema:
+              description: JSON schema used to vaildate the input parameters
+              type: object
+              additionalProperties: true
+            doc:
+              type: array
+              items:
+                allOf:
+                - $ref: '#/components/schemas/ProgramDoc'
+                - type: object
+                  required:
+                    - required
+                  properties:
+                    required:
+                      type: boolean
+                      description: Whether the parameter is required
+        returnValues:
+          description: Program return values
+          type: array
+          items:
+            $ref: '#/components/schemas/ProgramDoc'
+        interimResults:
+          description: Interim results of this program
+          type: array
+          items:
+            $ref: '#/components/schemas/ProgramDoc'
+        isPublic:
+          description: Indicates if the program is public or private
+          type: boolean
+      required:
+        - name
+        - description
+    ProgramDoc:
+      title: ProgramDoc
+      type: object      
+      properties:
+        name:
+          description: Name of the item
+          type: string
+        description:
+          type: string
+          description: Description of the item
+        type:
+          type: string
+          description: Item type
+      required:
+        - name
+        - description
+        - type      
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+      description: IBM Quantum API Token

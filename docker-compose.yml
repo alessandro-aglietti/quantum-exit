@@ -22,7 +22,7 @@ services:
     image: continuumio/miniconda3
     entrypoint: "/opt/qiskit-client/entrypoint.sh"
     working_dir: /opt/qiskit-client
-    environment: 
+    environment:
       - QISKIT_IBMQ_PROVIDER_LOG_LEVEL=DEBUG
       - QISKIT_IBMQ_PROVIDER_LOG_FILE=/opt/qiskit-client/ibm-quantum-provider.log
     volumes:
